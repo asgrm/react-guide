@@ -81,7 +81,7 @@ class App extends Component {
       <div className="App">
         <h1>Hi, I'm a React App</h1>
         <p className={classes.join(' ')}>This is really working!</p>
-        <StyledButton alternative={this.state.showPersons} onClick={this.togglePersonHandler}>Toogle Persons</StyledButton>
+        <button className="button" onClick={this.togglePersonHandler}>Toogle Persons</button>
         {persons}
     </div>      
     );
