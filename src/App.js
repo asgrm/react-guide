@@ -1,33 +1,47 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 import './App.css';
 import Person from './Person/Person';
+
+const StyledButton = styled.button`
+  background-color: ${props => props.alternative ? 'red' : 'green'};
+  color: #fff;
+  font: inherit;
+  border: 1px solid blue;
+  outline: none;
+  padding: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${props => props.alternative ? 'salmon' : 'lightgreen'};
+    color: #000;
+  }
+`;
+
 class App extends Component {
   state = {
     persons: [
-      {name: 'asgrm', age: 28},
-      {name: 'Max', age: 28},
-      {name: 'Stephanie', age: 26},
+      {id: 'f2db',name: 'asgrm', age: 28},
+      {id: 'a00b',name: 'Max', age: 28},
+      {id: 'defa',name: 'Stephanie', age: 26},
     ],
     otherState: 'other value',
     showPersons: false,
   };
 
-  switchNameHandler = (newName) => {
-    this.setState({persons: [
-      {name: 'Andrii', age: 28},
-      {name: newName, age: 28},
-      {name: 'Stephanie', age: 27},
-    ]
-    });
-  }; 
+  deletePersonHandler = (personIndex) => {
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({persons: persons});
+  };
 
-  nameChangedHandler = event => {
-    this.setState({persons: [
-      {name: 'Andrii', age: 28},
-      {name: event.target.value, age: 28},
-      {name: 'Stephanie', age: 27},
-    ]
-    });
+  nameChangedHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(el => el.id === id);
+    const person = {...this.state.persons[personIndex]};
+    person.name = event.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person
+    this.setState({persons: persons});
   };
 
   togglePersonHandler = () => {
@@ -37,36 +51,39 @@ class App extends Component {
   };
 
   render() {
-    const style = {
-      backgroundColor: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-    };
     let persons = null;
-    if(this.state.showPersons) {
+
+    if(this.state.showPersons) {      
       persons = (
         <div>
-        {this.state.persons.map(item => {
+        {this.state.persons.map((item, i) => {
           return <Person
+            key={item.id}
             name={item.name}
-            age={item.age}/>
+            age={item.age}
+            click={() => this.deletePersonHandler(i)}
+            changed={(event)=>this.nameChangedHandler(event, item.id)}
+            />
         })}
       </div> 
       );
+    }
+    
+    const classes = [];
+    if(this.state.persons.length <= 2) {
+      classes.push('red');
+    }
+    if(this.state.persons.length <= 1) {
+      classes.push('bold');
     }
 
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
-        <p>This is really working!</p>
-        <button style={style}
-        onClick={this.togglePersonHandler}>Toogle Persons</button>
+        <p className={classes.join(' ')}>This is really working!</p>
+        <StyledButton alternative={this.state.showPersons} onClick={this.togglePersonHandler}>Toogle Persons</StyledButton>
         {persons}
-       
-
-
-      </div>
+    </div>      
     );
   }
 }
