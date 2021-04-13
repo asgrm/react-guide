@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import classes from './App.css';
 import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit'
+import withClass from '../hoc/withClass';
+import Aux from '../hoc/Auxilary';
 
 class App extends Component {
   constructor(props){
@@ -17,9 +19,20 @@ class App extends Component {
   componentDidMount() {
     console.log('[App.js] componentDidMount');
   }
-  componentWillMount() {
-    console.log('[App.js] UNSAFE_componentWillMount');
+
+  // componentWillMount() {
+  //   console.log('[App.js] UNSAFE_componentWillMount');
+  // }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate');
+    return true;
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log('[App.js] componentDidUpdate');
+  }
+
   state = {
     persons: [
       {id: 'f2db',name: 'asgrm', age: 28},
@@ -28,6 +41,7 @@ class App extends Component {
     ],
     otherState: 'other value',
     showPersons: false,
+    showCockpit: true,
   };
 
   deletePersonHandler = (personIndex) => {
@@ -66,17 +80,22 @@ class App extends Component {
     }
 
     return (
-      <div className={classes.App}>
-        <Cockpit
+      <Aux>
+        <button onClick={()=>{
+          this.setState({showCockpit: !this.state.showCockpit});
+        }}>Remove Cockpit</button>
+
+        {this.state.showCockpit &&  <Cockpit
           title={this.props.appTitle}
-          persons={this.state.persons}
+          personsLength={this.state.persons.length}
           showPersons={this.state.showPersons}
           clicked={this.togglePersonHandler}
-        />        
+        /> }
+
         {persons}
-    </div>      
+    </Aux>      
     );
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
